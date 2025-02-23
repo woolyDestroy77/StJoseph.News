@@ -107,7 +107,8 @@ export const PostView: React.FC = () => {
       </Link>
 
       <article className="bg-gray-900 rounded-lg overflow-hidden shadow-xl">
-        <div className="aspect-[16/10] overflow-hidden bg-gray-800">
+        {/* IMAGE CONTAINER (FIXED) */}
+        <div className="aspect-[16/10] bg-gray-800 flex items-center justify-center overflow-hidden">
           {imageError || !isBase64Image ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center text-gray-400">
@@ -119,7 +120,7 @@ export const PostView: React.FC = () => {
             <img
               src={post.coverImage}
               alt={post.title}
-              className="w-full h-full object-cover"
+              className="w-auto h-full max-h-[500px] object-contain"
               onError={handleImageError}
               loading="lazy"
             />

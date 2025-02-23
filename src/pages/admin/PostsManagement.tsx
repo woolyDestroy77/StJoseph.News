@@ -123,11 +123,17 @@ export const PostsManagement: React.FC = () => {
                   <tr key={post.id} className="hover:bg-gray-800/50">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <img
-                          className="h-10 w-10 rounded-md object-cover flex-shrink-0"
-                          src={post.coverImage}
-                          alt=""
-                        />
+                      <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="h-12 w-12 rounded-md object-cover border border-gray-700"
+                      />
+
+
+
+
+
+
                         <div className="ml-4 min-w-0">
                           <div className="text-sm font-medium text-white truncate">
                             {post.title}
