@@ -123,18 +123,17 @@ export const PostsManagement: React.FC = () => {
                   <tr key={post.id} className="hover:bg-gray-800/50">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                      <img
-                        src={post.coverImage}
-                        alt={post.title}
-                        className="h-12 w-12 rounded-md object-cover border border-gray-700"
-                      />
+                        {/* Image Wrapper */}
+                        <div className="bg-gray-800 flex items-center justify-center overflow-hidden max-w-[200px]">
+                          <img
+                            src={post.coverImage}
+                            alt={post.title}
+                            className="w-full h-auto max-h-[500px] object-contain rounded-lg"
+                          />
+                        </div>
 
-
-
-
-
-
-                        <div className="ml-4 min-w-0">
+                        {/* Post Details */}
+                        <div className="ml-4 min-w-0 flex-shrink">
                           <div className="text-sm font-medium text-white truncate">
                             {post.title}
                           </div>
@@ -144,6 +143,8 @@ export const PostsManagement: React.FC = () => {
                         </div>
                       </div>
                     </td>
+
+                    {/* Educational Level */}
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
                         {post.educationalLevel?.map((level) => (
@@ -157,12 +158,16 @@ export const PostsManagement: React.FC = () => {
                         ))}
                       </div>
                     </td>
+
+                    {/* Date & Author */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {formatDate(post.publishedAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {post.author.name}
                     </td>
+
+                    {/* Actions (Edit/Delete) */}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-3">
                         <button
@@ -184,6 +189,7 @@ export const PostsManagement: React.FC = () => {
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
         </div>
