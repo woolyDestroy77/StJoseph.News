@@ -52,7 +52,6 @@ export const PostsManagement: React.FC = () => {
     return isValid(date) ? format(date, 'MMM d, yyyy h:mm a') : 'Invalid date';
   };
 
-  // Helper function to get excerpt from content
   const getExcerpt = (content: string, length: number = 50) => {
     return content.length > length ? `${content.slice(0, length)}...` : content;
   };
@@ -124,11 +123,11 @@ export const PostsManagement: React.FC = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         {/* Image Wrapper */}
-                        <div className="bg-gray-800 flex items-center justify-center overflow-hidden max-w-[200px]">
+                        <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
                           <img
                             src={post.coverImage}
                             alt={post.title}
-                            className="w-full h-auto max-h-[500px] object-contain rounded-lg"
+                            className="w-full h-full object-cover"
                           />
                         </div>
 
@@ -144,7 +143,6 @@ export const PostsManagement: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* Educational Level */}
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
                         {post.educationalLevel?.map((level) => (
@@ -159,7 +157,6 @@ export const PostsManagement: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* Date & Author */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {formatDate(post.publishedAt)}
                     </td>
@@ -167,7 +164,6 @@ export const PostsManagement: React.FC = () => {
                       {post.author.name}
                     </td>
 
-                    {/* Actions (Edit/Delete) */}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-3">
                         <button
@@ -189,13 +185,11 @@ export const PostsManagement: React.FC = () => {
                   </tr>
                 ))}
               </tbody>
-
             </table>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {postToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full">
