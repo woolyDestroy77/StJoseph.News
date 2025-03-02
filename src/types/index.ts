@@ -3,6 +3,8 @@ export interface Post {
   title: string;
   content: string;
   coverImage: string;
+  coverImageUrl: string;
+  videoUrl: string;
   publishedAt: string;
   readingTime: number;
   educationalLevel: string[];

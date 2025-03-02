@@ -24,7 +24,7 @@ export const processImage = async (file: File): Promise<string> => {
     }
 
     const reader = new FileReader();
-    
+
     reader.onload = () => {
       if (typeof reader.result !== 'string') {
         reject(new Error('Failed to process image'));
@@ -45,6 +45,26 @@ export const processImage = async (file: File): Promise<string> => {
 
     reader.readAsDataURL(file);
   });
+};
+
+export const storeFile = async (file: File , resource: "image" | "video" = "image"): Promise<string> => {
+
+
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Math.random()}_${Date.now()}.${fileExt}`
+  const filePath = `${fileName}`
+
+  const { error } = await supabase.storage.from(resource === "image" ? 'images' : "videos").upload(filePath, file)
+
+
+  if (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+
+  const {data: {publicUrl}} = supabase.storage.from(resource === "image"? 'images' : "videos").getPublicUrl(fileName);
+
+  return publicUrl;
 };
 
 export const EDUCATIONAL_LEVELS = {

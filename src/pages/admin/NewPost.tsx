@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Image as ImageIcon, AlertCircle } from 'lucide-react';
-import { postStorage, processImage, EDUCATIONAL_LEVELS } from '../../lib/storage';
+import { postStorage, processImage, EDUCATIONAL_LEVELS, storeFile } from '../../lib/storage';
 
 export const NewPost: React.FC = () => {
   const navigate = useNavigate();
@@ -71,7 +71,8 @@ export const NewPost: React.FC = () => {
     if (!file) return;
 
     try {
-      const base64Image = await processImage(file);
+       const base64Image = await storeFile(file, "image");
+      // const base64Image = await processImage(file);
       setImageUrl(base64Image);
     } catch (err) {
       console.error('Image processing error:', err);
@@ -82,10 +83,11 @@ export const NewPost: React.FC = () => {
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+      console.log("File:", file)
 
     setError('');
     try {
-      const base64Image = await processImage(file);
+      const base64Image = await storeFile(file, "image");
       setImageUrl(base64Image);
     } catch (err) {
       console.error('Image processing error:', err);
