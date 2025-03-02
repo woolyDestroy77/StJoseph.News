@@ -151,9 +151,11 @@ class PostStorage {
 
       return data.map(post => ({
         id: post.id,
+        coverImage: post.cover_image,
         title: post.title,
         content: post.content,
-        coverImage: post.cover_image,
+        coverImageUrl: post.cover_image_url,
+        videoUrl: post.video_url,
         publishedAt: post.published_at,
         readingTime: post.reading_time,
         educationalLevel: post.educational_level,
@@ -324,12 +326,13 @@ class PostStorage {
     title: string;
     content: string;
     coverImage: string;
+    videoUrl?: string;
     educationalLevel: string[];
   }): Promise<Post> {
     try {
-      if (!validateImageFormat(postData.coverImage)) {
-        throw new Error('Invalid image format');
-      }
+      // if (!validateImageFormat(postData.coverImage)) {
+      //   throw new Error('Invalid image format');
+      // }
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
@@ -340,7 +343,9 @@ class PostStorage {
         .insert({
           title: postData.title,
           content: postData.content,
-          cover_image: postData.coverImage,
+          // cover_image: postData.coverImage,
+          cover_image_url: postData.coverImage,
+          video_url: postData.videoUrl,
           educational_level: postData.educationalLevel,
           author_id: user.id
         })
@@ -361,7 +366,9 @@ class PostStorage {
         id: post.id,
         title: post.title,
         content: post.content,
-        coverImage: post.cover_image,
+        coverImageUrl: post.cover_image_url,
+        coverImage: post.cover_image_url,
+        videoUrl: post.video_url,
         publishedAt: post.published_at,
         readingTime: post.reading_time,
         educationalLevel: post.educational_level,
@@ -382,19 +389,21 @@ class PostStorage {
     title: string;
     content: string;
     coverImage: string;
+    videoUrl: string;
     educationalLevel: string[];
   }): Promise<Post> {
     try {
-      if (!validateImageFormat(postData.coverImage)) {
-        throw new Error('Invalid image format');
-      }
+      // if (!validateImageFormat(postData.coverImage)) {
+      //   throw new Error('Invalid image format');
+      // }
 
       const { data: post, error: postError } = await supabase
         .from('posts')
         .update({
           title: postData.title,
           content: postData.content,
-          cover_image: postData.coverImage,
+          cover_image_url: postData.coverImage,
+          video_url: postData.videoUrl,
           educational_level: postData.educationalLevel,
           updated_at: new Date().toISOString()
         })
@@ -426,7 +435,9 @@ class PostStorage {
         id: post.id,
         title: post.title,
         content: post.content,
-        coverImage: post.cover_image,
+        coverImageUrl: post.cover_image_url,
+        coverImage: post.cover_image_url,
+        videoUrl: post.video_url,
         publishedAt: post.published_at,
         readingTime: post.reading_time,
         educationalLevel: post.educational_level,

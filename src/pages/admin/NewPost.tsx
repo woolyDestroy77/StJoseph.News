@@ -29,6 +29,7 @@ export const NewPost: React.FC = () => {
         title,
         content,
         coverImage: imageUrl,
+        videoUrl: videoUrl,
         educationalLevel: selectedLevels,
       });
 
@@ -87,7 +88,6 @@ export const NewPost: React.FC = () => {
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-      console.log("File:", file)
 
     setError('');
     try {
@@ -102,12 +102,11 @@ export const NewPost: React.FC = () => {
   const handleVideoInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-      console.log("File:", file)
 
     setError('');
     try {
-      const base64Image = await storeFile(file, "video");
-      setImageUrl(base64Image);
+      const url = await storeFile(file, "video");
+      setVideoUrl(url);
     } catch (err) {
       console.error('Video processing error:', err);
       setError(err instanceof Error ? err.message : 'Failed to save video');

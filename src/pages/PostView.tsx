@@ -17,7 +17,7 @@ export const PostView: React.FC = () => {
   useEffect(() => {
     const loadPost = async () => {
       if (!id) return;
-      
+
       try {
         const posts = await postStorage.getAllPosts();
         const foundPost = posts.find(p => p.id === id);
@@ -40,10 +40,10 @@ export const PostView: React.FC = () => {
   const formatDate = (dateString: string) => {
     try {
       if (!dateString) return 'Date unavailable';
-      
+
       const date = parseISO(dateString);
       if (!isValid(date)) return 'Date unavailable';
-      
+
       return format(date, 'MMM d, yyyy h:mm a');
     } catch (error) {
       console.error('Date parsing error:', error);
@@ -109,7 +109,7 @@ export const PostView: React.FC = () => {
       <article className="bg-gray-900 rounded-lg overflow-hidden shadow-xl">
         {/* IMAGE CONTAINER (FIXED) */}
         <div className="aspect-[16/10] bg-gray-800 flex items-center justify-center overflow-hidden">
-          {imageError || !isBase64Image ? (
+          {imageError  ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center text-gray-400">
                 <ImageOff className="w-16 h-16 mx-auto mb-2" />
@@ -118,13 +118,22 @@ export const PostView: React.FC = () => {
             </div>
           ) : (
             <img
-              src={post.coverImage}
+              src={post.coverImageUrl}
               alt={post.title}
               className="w-auto h-full max-h-[500px] object-contain"
               onError={handleImageError}
               loading="lazy"
             />
           )}
+
+        </div>
+        <div className="w-full flex justify-center items-center">
+          {post.videoUrl && <video
+            src={post.videoUrl}
+            controls
+            className="w-auto mt-3 h-full rounded-xl max-h-[500px] object-contain"
+            onError={handleImageError}
+          />}
         </div>
 
         <div className="p-8">
