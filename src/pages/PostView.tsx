@@ -118,7 +118,7 @@ export const PostView: React.FC = () => {
             </div>
           ) : (
             <img
-              src={post.coverImageUrl}
+              src={post.coverImageUrl || post.coverImage}
               alt={post.title}
               className="w-auto h-full max-h-[500px] object-contain"
               onError={handleImageError}

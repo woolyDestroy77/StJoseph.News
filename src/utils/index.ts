@@ -1,9 +1,16 @@
 export function linkify(text: string) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const urlRegex = /(?:(?:https?|ftp):\/\/)?[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?/gi;
+
   return text.replace(urlRegex, function(url) {
-    return '<a href="' + url + '">' + url + '</a>';
+      let href = url;
+      if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('ftp://')) {
+          href = 'http://' + href;
+      }
+      return '<a href="' + href + '">' + url + '</a>';
   });
 }
+
+
 
 export function sanitizeHTML(html: string) {
   const allowedTags = ['p', 'strong', 'em', 'a', 'br', 'span', 'div'];

@@ -30,21 +30,21 @@ export const Card: React.FC<CardProps> = ({ post }) => {
   };
 
   // Check if the image is a base64 string or a valid URL
-  const isValidImage = (src: string | undefined) => {
-    return src?.startsWith('data:image/') || src?.startsWith('http');
-  };
+  // const isValidImage = (src: string | undefined) => {
+  //   return src?.startsWith('data:image/') || src?.startsWith('http');
+  // };
 
   return (
     <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
       <div className="w-full h-[300px] bg-gray-800 flex items-center justify-center">
-        {imageError || !isValidImage(post.coverImage) ? (
+        {imageError  ? (
           <div className="text-center text-gray-400">
             <ImageOff className="w-16 h-16 mx-auto mb-2" />
             <p>Image not available</p>
           </div>
         ) : (
           <img
-            src={post.coverImage}
+            src={post.coverImageUrl || post.coverImage}
             alt={post.title}
             className="w-auto h-full max-h-[300px] object-contain"
             onError={handleImageError}
@@ -81,7 +81,7 @@ export const Card: React.FC<CardProps> = ({ post }) => {
         </div>
 
         <div className="flex items-center justify-end pt-4 border-t border-gray-800">
-          <Link 
+          <Link
             to={`/posts/${post.id}`}
             className="text-blue-400 hover:text-blue-300 transition-colors text-sm font-medium"
           >
