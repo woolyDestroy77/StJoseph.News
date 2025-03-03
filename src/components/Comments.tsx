@@ -4,6 +4,7 @@ import { MessageSquare, Trash2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { postStorage } from '../lib/storage';
 import type { Comment } from '../types';
+import { linkify, sanitizeHTML } from '../utils';
 
 interface CommentsProps {
   postId: string;
@@ -41,7 +42,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId, comments, onCommentU
 
     try {
       const updatedComments = await postStorage.addComment(postId, {
-        content: trimmedComment,
+        content: linkify(trimmedComment),
         author: {
           id: user.id,
           name: user.name || 'Unknown User',
@@ -182,7 +183,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId, comments, onCommentU
                 </button>
               )}
             </div>
-            <p className="text-gray-300 whitespace-pre-wrap break-words">{comment.content}</p>
+            <p className="text-gray-300 whitespace-pre-wrap break-words prose " dangerouslySetInnerHTML={{__html: sanitizeHTML(comment.content)}}></p>
           </div>
         ))}
 

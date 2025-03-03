@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Image as ImageIcon, Calendar, Clock, AlertCircle } from 'lucide-react';
-import { postStorage, processImage, EDUCATIONAL_LEVELS } from '../../lib/storage';
+import { postStorage, processImage, EDUCATIONAL_LEVELS, storeFile } from '../../lib/storage';
 import type { Post } from '../../types';
 
 export const EditPost: React.FC = () => {
@@ -11,6 +11,7 @@ export const EditPost: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [scheduledFor, setScheduledFor] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
@@ -22,18 +23,19 @@ export const EditPost: React.FC = () => {
   useEffect(() => {
     const loadPost = async () => {
       if (!id) return;
-      
+
       try {
         const posts = await postStorage.getAllPosts();
         const foundPost = posts.find(p => p.id === id);
-        
+
         if (foundPost) {
           setPost(foundPost);
           setTitle(foundPost.title);
           setContent(foundPost.content);
           setImageUrl(foundPost.coverImage);
+          setVideoUrl(foundPost.videoUrl);
           setSelectedLevels(foundPost.educationalLevel || []);
-          
+
           if (foundPost.scheduledFor) {
             const date = new Date(foundPost.scheduledFor);
             setScheduledFor(date.toISOString().split('T')[0]);
@@ -65,6 +67,7 @@ export const EditPost: React.FC = () => {
         title,
         content,
         coverImage: imageUrl,
+        videoUrl: videoUrl,
         educationalLevel: selectedLevels,
       });
 
@@ -101,7 +104,7 @@ export const EditPost: React.FC = () => {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback(async (e: React.DragEvent) => {
+  const handleDrop = useCallback(async (e: React.DragEvent, resource: "image" | "video" = "image") => {
     e.preventDefault();
     setIsDragging(false);
     setError('');
@@ -110,13 +113,32 @@ export const EditPost: React.FC = () => {
     if (!file) return;
 
     try {
-      const base64Image = await processImage(file);
-      setImageUrl(base64Image);
+      const url = await storeFile(file, resource);
+      if(resource === "image"){
+        setImageUrl(url);
+      }else{
+        setVideoUrl(url)
+      }
     } catch (err) {
-      console.error('Image processing error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to process image');
+      console.error('Resource processing error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to process resource');
     }
   }, []);
+
+  const handleVideoInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setError('');
+    try {
+      const url = await storeFile(file, "video");
+      setVideoUrl(url);
+    } catch (err) {
+      console.error('Video processing error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to save video');
+    }
+  };
+
 
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -186,7 +208,7 @@ export const EditPost: React.FC = () => {
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+            onDrop={(e) => handleDrop(e, "image")}
           >
             <input
               type="file"
@@ -220,7 +242,53 @@ export const EditPost: React.FC = () => {
             </div>
           </div>
         </div>
-
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Video
+          </label>
+          <div
+            className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+              isDragging
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-gray-700 hover:border-gray-600'
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, "video")}
+          >
+            <input
+              type="file"
+              accept="video/*"
+              max={10000}
+              onChange={handleVideoInput}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              disabled={loading}
+            />
+            <div className="text-center">
+              {videoUrl ? (
+                <div className="relative group">
+                  <video
+                    src={videoUrl}
+                    className="max-h-48 mx-auto rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                    <p className="text-white text-sm">Click or drag to change video</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center">
+                    <ImageIcon className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    <p className="font-medium">Click to upload or drag and drop</p>
+                    <p>MP4 or WebM (max. 10MB)</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="scheduledDate" className="block text-sm font-medium mb-1">

@@ -17,7 +17,9 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
     storageKey: 'st-josef-auth'
   },
   global: {
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      // 'Content-Type': 'application/json'
+     }
   },
   db: {
     schema: 'public'
@@ -44,7 +46,7 @@ export async function withRetry<T>(
   baseDelay = 1000
 ): Promise<T> {
   let lastError: any;
-  
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       // Check connection before attempting operation
@@ -56,31 +58,31 @@ export async function withRetry<T>(
       return await operation();
     } catch (error: any) {
       lastError = error;
-      
+
       // Don't retry if it's an auth error or validation error
       if (error?.status === 401 || error?.status === 422) {
         throw error;
       }
-      
+
       // Only retry on network errors, connection errors, or 5xx errors
-      const isRetryable = 
-        error?.message?.includes('fetch') || 
+      const isRetryable =
+        error?.message?.includes('fetch') ||
         error?.message?.includes('connect') ||
         (error?.status && error?.status >= 500);
-        
+
       if (!isRetryable || attempt === maxRetries - 1) {
         throw error;
       }
-      
+
       // Exponential backoff with jitter
       const jitter = Math.random() * 200;
       const delay = baseDelay * Math.pow(2, attempt) + jitter;
       await new Promise(resolve => setTimeout(resolve, delay));
-      
+
       console.log(`Retrying operation (attempt ${attempt + 1} of ${maxRetries})...`);
     }
   }
-  
+
   throw lastError;
 }
 
